@@ -1,4 +1,5 @@
-# Pomodoro-Chrome-Extension 🍅
+# Focus-Mode-Chrome-Extension 🤫
+**Credit:** Original code forked from sejalvasan/Pomodoro-Chrome-Extension
 
 ## Tutorial - Functionality ⏰
 https://user-images.githubusercontent.com/69964629/138063621-01f5d696-f911-40bc-88d0-58312fb265cc.mp4
