@@ -23,6 +23,11 @@ startTimerBtn.addEventListener("click", () => {
             isRunning: !res.isRunning,
         }, () => {
             startTimerBtn.textContent = !res.isRunning ? "Pause Timer" : "Start Timer"
+            if(startTimerBtn.textContent === "Start Timer") {
+                chrome.runtime.sendMessage({ type: "StopTimer"})
+            } else {
+                chrome.runtime.sendMessage({ type: "StartTimer"})
+            }
         })
     })
 })
@@ -34,19 +39,20 @@ resetTimerBtn.addEventListener("click", () => {
         isRunning: false,
     }, () => {
         startTimerBtn.textContent = "Start Timer"
+        chrome.runtime.sendMessage({ type: "StopTimer"})
     })
 })
 
 const addTaskBtn = document.getElementById("add-task-btn")
 addTaskBtn.addEventListener("click", () => addTask())
 
-chrome.storage.sync.get(["tasks"], (res) => {
+chrome.storage.local.get(["tasks"], (res) => {
     tasks = res.tasks ? res.tasks : []
     renderTasks()
 })
 
 function saveTasks() {
-    chrome.storage.sync.set({
+    chrome.storage.local.set({
         tasks,
     })
 }
