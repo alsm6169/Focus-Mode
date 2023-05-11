@@ -15,7 +15,8 @@ chrome.alarms.onAlarm.addListener((alarm) => {
                     })
                     timer = 0
                     isRunning = false
-                }
+                    sendStopMsgToAllTabs()
+                            }
                 chrome.storage.local.set({
                     timer,
                     isRunning,
@@ -25,7 +26,8 @@ chrome.alarms.onAlarm.addListener((alarm) => {
     }
 })
 
-chrome.storage.local.get(["timer", "isRunning", "timeOption", "block_urls"], (res) => {
+// initialization of the chrome.storage variables
+chrome.storage.local.get(["timer", "isRunning", "timeOption", "block_urls", "injectedTabs"], (res) => {
     chrome.storage.local.set({
         timer: "timer" in res ? res.timer : 0,
         timeOption: "timeOption" in res ? res.timeOption : 25,
@@ -38,29 +40,18 @@ chrome.storage.local.get(["timer", "isRunning", "timeOption", "block_urls"], (re
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log('chrome.runtime.onMessage.addListener: ', message)
     if (message.type === "NewURL") {
-        console.log('background.js: NewURL')
+        // console.log('background.js::onMessage> NewURL')
+        sendStopMsgToAllTabs()
         injectJS()
     }else if(message.type === "StartTimer") {
-        console.log('background.js: StartTimer')
-        sendMsgToTabs("StartTimer")
+        // console.log('background.js::onMessage> StartTimer')
+        // injectJS()
+        sendStartMsgToRelevantTabs()
     }else if(message.type ==="StopTimer") {
-        console.log('background.js: StopTimer')
-        sendMsgToTabs("StopTimer")
+        // console.log('background.js::onMessage> StopTimer')
+        sendStopMsgToAllTabs()
     }
 })
-
-async function sendMsgToTabs(msg) {
-    try {
-        let tabs = await getRelevantTabs()
-        tabs.forEach((tab) => {
-            console.log('sending message to tab', tab.id, tab.url)
-            const resp = chrome.tabs.sendMessage(tab.id, {type : msg})
-            console.log(resp)
-        })
-    } catch (err) {
-        console.log('No matching tab', err)
-    }
-}
 
 async function getRelevantTabs() {
     try {
@@ -68,65 +59,42 @@ async function getRelevantTabs() {
         const res = await chrome.storage.local.get(["block_urls"])
         blockUrlList = "block_urls" in res ? res.block_urls : []
         blockUrlList = blockUrlList.map((obj) => obj.url)
-        // console.log('injectJS: ', blockUrlList)
+        // console.log('getRelevantTabs:blockUrlList> ', blockUrlList)
 
         const qryOptions = { "url": blockUrlList.map(p => `*://*.${p}/*`)}
         const tabs = await chrome.tabs.query(qryOptions)
+        console.log('getRelevantTabs:tabs> ', tabs)
         return tabs
     } catch (err) {
-        console.log('No matching tab', err)
+        console.log('getRelevantTabs: No matching tab', err)
     }
 
 }
 async function injectJS() {
-    // further simplification of injectJS_v1 below in terms of code readability
     try {
         let tabs = await getRelevantTabs()
         // console.log('injectJS all matching tabs', tabs)
-        tabs.forEach((tab) => {
-            console.log('EXISTING TAB: injecting into tab', tab.id, tab.url)
-            chrome.scripting.executeScript({
-                target: {tabId: tab.id},
-                files: ['content/injected.js']
-            })
-        })
-    } catch (err) {
-        console.log('No matching tab', err)
-    }
-}
-
-
-
-// Listen NEW tab with matching URL
-/*
-chrome.tabs.onCreated.addListener(async function(tab) {
-    try {
-        console.log('onCreated:tab>', tab)
-        let blockUrlList = []
-        const res = await chrome.storage.local.get(["block_urls"])
-        blockUrlList = "block_urls" in res ? res.block_urls : []
-        blockUrlList = blockUrlList.map((obj) => obj.url)
-        console.log('onCreated:blockUrlList>',blockUrlList)
-
-        if (blockUrlList.length > 0 && blockUrlList.includes(tab.url)) {
-            if(tab.status === "complete") {
-                console.log('NEW TAB: injecting into tab', tab.id, tab.url)
+        tabs.forEach(async(tab) => {
+            try {
+                console.log('EXISTING TAB: injecting into tab', tab.id, tab.url)
                 chrome.scripting.executeScript({
                     target: {tabId: tab.id},
                     files: ['content/injected.js']
                 })
+                // resp = await insertIntoInjectedTabList(tab.id)
+            } catch(err2) {
+                console.log('injectJS: err2', err2)
             }
-        }
+        })
     } catch (err) {
-        console.log('No matching tab', err)
+        console.log('injectJS: err', err)
     }
-})
-*/
+}
 
 /*
  * Filter array items based on search criteria (query)
  */
-async function filterItems(blockUrlList, tabUrl) {
+async function checkTabUrlInBlockUrlList(blockUrlList, tabUrl) {
     // console.log('blockUrlList> ', blockUrlList, 'tabUrl> ', tabUrl)
     matchList = blockUrlList.filter((blockUrl) => tabUrl.toLowerCase().includes(blockUrl.toLowerCase()));
     // console.log('matchList.length', matchList.length, 'matchList', matchList)
@@ -136,17 +104,17 @@ async function filterItems(blockUrlList, tabUrl) {
   }
 
 
-// Listen for UPDATE in the active tab URL
+// Listen for UPDATE in all the tabs, in case the new URL matches the block URL inject the script
 chrome.tabs.onUpdated.addListener(async function(tabId, changeInfo, tab) {
     try {
-        console.log('onUpdated:tabId>', tabId, ', changeInfo>', changeInfo, ', tab>', tab)
+        // console.log('onUpdated:tabId>', tabId, ', changeInfo>', changeInfo, ', tab>', tab)
         let blockUrlList = []
-        const res = await chrome.storage.local.get(["block_urls"])
+        let res = await chrome.storage.local.get(["block_urls"])
         blockUrlList = "block_urls" in res ? res.block_urls : []
         blockUrlList = blockUrlList.map((obj) => obj.url)
         // console.log('onUpdated:blockUrlList>',blockUrlList)
 
-        if (blockUrlList.length > 0 && changeInfo.status === "complete" && await filterItems(blockUrlList,tab.url)) {
+        if (blockUrlList.length > 0 && changeInfo.status === "complete" && await checkTabUrlInBlockUrlList(blockUrlList,tab.url)) {
                 console.log('UPDATE TAB: injecting into tab', tab.id, tab.url)
                 let resp = await chrome.scripting.executeScript({
                     target: {tabId: tab.id},
@@ -154,46 +122,57 @@ chrome.tabs.onUpdated.addListener(async function(tabId, changeInfo, tab) {
                     })
                 console.log('response from injecting>', resp)
         }
+
+        res = await chrome.storage.local.get(["isRunning"])
+        if(res.isRunning) {
+            sendStartMsgToRelevantTabs()
+        }
+
     } catch (err) {
-        console.log('No matching tab', err)
+        console.log('onUpdated: err', err)
     }
 })
+/*
+// Listen for CLOSE TAB and remove it from injected tab, if it existed
+chrome.tabs.onRemoved.addListener(function(tabid, removed) {
+    removeFromInjectedTabList(tabid)
+})
+*/
 
-async function injectJS_backup() {
-    // further simplification of injectJS_v1 below in terms of code readability
-    let blockUrlList = []
-
+async function sendStartMsgToRelevantTabs() {
     try {
-        const res = await chrome.storage.local.get(["block_urls"])
-        blockUrlList = "block_urls" in res ? res.block_urls : []
-        blockUrlList = blockUrlList.map((obj) => obj.url)
-        // console.log('injectJS: ', blockUrlList)
-
-        const qryOptions = { "url": blockUrlList.map(p => `*://*.${p}/*`)}
-        let tabs = await chrome.tabs.query(qryOptions)
-        // console.log('injectJS all matching tabs', tabs)
-        tabs.forEach((tab) => {
-            console.log('injecting into tab', tab.id, tab.url)
-            chrome.scripting.executeScript({
-                target: {tabId: tab.id},
-                files: ['content/injected.js']
-            })
+        let tabs = await getRelevantTabs()
+        tabs.forEach(async (tab) => {
+            try {
+                console.log('sendStartMsgToRelevantTabs:tab', tab.id, tab.url)
+                const resp = chrome.tabs.sendMessage(tab.id, {type : "StartTimer"})
+                // console.log('sendStartMsgToRelevantTabs: resp', resp)
+            } catch (err2) {
+                console.log('sendStartMsgToRelevantTabs: err2', err2)
+            }
         })
     } catch (err) {
-        console.log('No matching tab', err)
+        console.log('sendStartMsgToRelevantTabs: err', err)
     }
 }
-function injectJS_v1() {
-    //uses callback approach
-    let blockUrlList = []
-    chrome.storage.local.get(["block_urls"], (res) => {
-        blockUrlList = "block_urls" in res ? res.block_urls : []
-        blockUrlList = blockUrlList.map((obj) => obj.url)
-        // console.log('injectJS: ', blockUrlList)
-        chrome.tabs.query({ "url": blockUrlList.map(p => `*://*.${p}/*`)}, (tabs) => {
-            tabs.forEach((tab) => {
-                console.log('tab.id: ',tab.id, 'tab.url:', tab.url)
-            })
-        })
-    })
+
+async function sendStopMsgToAllTabs() {
+    try {
+        // we send stpo message to all tabs
+        let tabs = await chrome.tabs.query({}) // all the tabs
+        // tabs.forEach((tab) => {
+        for (const tab of tabs) {
+            console.log('sendStopMsgToAllTabs:tab', tab.id, tab.url)
+            try {
+                const resp = await chrome.tabs.sendMessage(tab.id, {type : 'StopTimer'})
+                // console.log(resp)
+            } catch(err2) {
+                //don't care about this error
+                console.log('sendStopMsgToAllTabs:err2 for tab', tab.id)
+            }
+        }
+    } catch (err) {
+        console.log('sendStopMsgToAllTabs: err', err)
+    }
 }
+

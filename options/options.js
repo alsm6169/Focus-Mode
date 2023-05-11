@@ -23,16 +23,13 @@ saveBtn.addEventListener("click", () => {
         isRunning: false,
         block_urls: block_urls
     })
+    console.log('save-btn:click:: block_urls', block_urls)
     chrome.runtime.sendMessage({ type: "NewURL"})
-    // sendMessage()
     alert('Settings Saved!')
 })
 
-
-
-//TODO replace function (e) with (e) =>
 const urlInElem = document.getElementById("url-input")
-urlInElem.addEventListener('keypress', function (e) {
+urlInElem.addEventListener('keypress', (e) => {
     //console.log(e.key, urlInput.innerText)
     if (e.key === "Enter") {
         saveUrlToList()
@@ -52,10 +49,9 @@ function saveUrlToList() {
         // console.log('saveUrlToList(maxIndex new): ', maxIndex)
         block_urls.push({index: Number(maxIndex), url: urlInElem.value})
         urlInElem.value = ''
-        //console.log('saveUrlToList(block_urls): ', block_urls)
+        // console.log('saveUrlToList(block_urls): ', block_urls)
     }
     drawUrlList()
-    // saveUrlsInStorage()
 }
 
 const blockListDom = document.getElementById('blocklist-containter')
@@ -93,7 +89,7 @@ function drawUrlList() {
 
 
 function deleteUrl(idx) {
-    console.log('deleteUrl(idx): ', idx, ', block_urls: ', block_urls)
+    // console.log('deleteUrl(idx): ', idx, ', block_urls: ', block_urls)
     // let idx = this.getAttribute("id")
     // console.log(`Button with id: ${idx} clicked`)
     // this.parentNode.remove();
@@ -102,5 +98,4 @@ function deleteUrl(idx) {
     })
     // console.log('removeItem: ', block_urls)
     drawUrlList()
-    // saveUrlsInStorage()
 }
