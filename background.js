@@ -1,15 +1,15 @@
-chrome.alarms.create("pomodoroTimer", {
+chrome.alarms.create("FocusModeTimer", {
     periodInMinutes: 1 / 60,
 })
 
 chrome.alarms.onAlarm.addListener((alarm) => {
-    if (alarm.name === "pomodoroTimer") {
+    if (alarm.name === "FocusModeTimer") {
         chrome.storage.local.get(["timer", "isRunning", "timeOption"], (res) => {
             if (res.isRunning) {
                 let timer = res.timer + 1
                 let isRunning = true
                 if (timer === 60 * res.timeOption) {
-                    this.registration.showNotification("Pomodoro Timer", {
+                    this.registration.showNotification("Focus Mode Timer", {
                         body: `${res.timeOption} minutes has passed!`,
                         icon: "icon.png",
                     })
@@ -27,7 +27,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 })
 
 // initialization of the chrome.storage variables
-chrome.storage.local.get(["timer", "isRunning", "timeOption", "block_urls", "injectedTabs"], (res) => {
+chrome.storage.local.get(["timer", "isRunning", "timeOption", "block_urls"], (res) => {
     chrome.storage.local.set({
         timer: "timer" in res ? res.timer : 0,
         timeOption: "timeOption" in res ? res.timeOption : 25,
@@ -145,7 +145,7 @@ async function sendStartMsgToRelevantTabs() {
         tabs.forEach(async (tab) => {
             try {
                 console.log('sendStartMsgToRelevantTabs:tab', tab.id, tab.url)
-                const resp = chrome.tabs.sendMessage(tab.id, {type : "StartTimer"})
+                const resp = await chrome.tabs.sendMessage(tab.id, {type : "StartTimer"})
                 // console.log('sendStartMsgToRelevantTabs: resp', resp)
             } catch (err2) {
                 console.log('sendStartMsgToRelevantTabs: err2', err2)

@@ -1,7 +1,7 @@
 body {
   height: 400px;
   width: 350px;
-  background-color: indianred;
+  background-color: darkslateblue;
 }
 
 .header {
@@ -27,7 +27,7 @@ body {
 }
 
 #btn-container > button {
-  color: indianred;
+  color: darkslateblue;
   background-color: whitesmoke;
   border: none;
   outline: none;
@@ -60,7 +60,7 @@ body {
   height: 25px;
   width: 25px;
   border-radius: 4px;
-  color: indianred;
+  color: darkslateblue;
   cursor: pointer;
   font-weight: 700;
 }
