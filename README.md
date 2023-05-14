@@ -32,6 +32,9 @@ This extension was built upon the codebase of the [Pomodoro Chrome Extension](ht
 4. Start the timer and enjoy uninterrupted focus on your tasks.
 5. When the timer expires, a notificaton with show, and the blocked websites will become accessible again.
 
+[![](https://markdown-videos.deta.dev/youtube/l-B0qQyNxiU)](https://youtu.be/l-B0qQyNxiU)  
+**Video demo of installation and usage**
+
 ## Contributing
 
 Contributions are always welcome! If you have any suggestions, ideas, or improvements, feel free to open an issue or submit a pull request. Together, we can make this extension even better.
