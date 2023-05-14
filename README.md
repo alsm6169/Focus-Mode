@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Website Blocker Chrome Extension allows you to take control of your browsing habits and stay focused on what matters. This extension empowers you to temporarily block distracting websites for a customizable duration, and once the time is up, you'll be notified with a notification and regain access to those sites. It's the perfect productivity tool to help you stay on track and eliminate digital distractions.
+The Focus-Mode Chrome Extension allows you to take control of your browsing habits and stay focused on what matters. This extension empowers you to temporarily block distracting websites for a customizable duration, and once the time is up, you'll be notified with a notification and regain access to those sites. It's the perfect productivity tool to help you stay on track and eliminate digital distractions.
 
 This extension was built upon the codebase of the [Pomodoro Chrome Extension](https://github.com/sejalvasan/Pomodoro-Chrome-Extension) by [Sejal Vasan](https://github.com/sejalvasan).
 
@@ -22,7 +22,7 @@ This extension was built upon the codebase of the [Pomodoro Chrome Extension](ht
 2. Open Google Chrome and navigate to `chrome://extensions`.
 3. Enable the "Developer mode" option at the top right corner of the page.
 4. Click on "Load unpacked" and select the cloned/downloaded folder.
-5. The Website Blocker Chrome Extension will now be installed and ready to use.
+5. The Focus-Mode Chrome Extension will now be installed and ready to use.
 
 ## Usage
 
