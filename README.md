@@ -6,12 +6,11 @@ The Focus-Mode Chrome Extension allows you to take control of your browsing habi
 
 ## Features
 
-- Easily add, delete, and view a list of websites to block.
-- Easily add, delete, and view a list of tasks to be accompalishes.
+- Easily add, delete, and view a list of websites to block via the options page.
+- Easily add, delete, and view a list of tasks to be accomplish.
 - Works seamlessly across all open tabs, ensuring a distraction-free browsing experience.
 - Customizable blocking duration, allowing you to set the timer that suits your needs.
-- Intuitive and user-friendly options page for managing your blocked websites list.
-- Visually appealing "Blocked Temporarily" overlay page, creating a friendly reminder to stay focused.
+- "Blocked Temporarily" overlay page, creating a friendly reminder to stay focused.
 - Manifest v3 compliant, providing improved performance and security.
 
 ## Installation
@@ -21,10 +20,11 @@ The Focus-Mode Chrome Extension allows you to take control of your browsing habi
 3. Enable the "Developer mode" option at the top right corner of the page.
 4. Click on "Load unpacked" and select the cloned/downloaded folder.
 5. The Focus-Mode Chrome Extension will now be installed and ready to use.
+6. Pin the Focus-Mode extension for easy access from the Chrome toolbar.
 
 ## Usage
 
-1. Click on the extension icon in the Chrome toolbar to access the options page.
+1. **Right-Click** on the extension icon in the Chrome toolbar to access the options page.
 2. Add the URLs of the websites you want to block temporarily.
 3. Set the desired blocking duration using the intuitive interface.
 4. Start the timer and enjoy uninterrupted focus on your tasks.
