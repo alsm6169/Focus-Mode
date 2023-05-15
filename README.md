@@ -34,14 +34,6 @@ The Focus-Mode Chrome Extension allows you to take control of your browsing habi
 **Video demo of installation and usage**  
 [![](https://markdown-videos.deta.dev/youtube/l-B0qQyNxiU)](https://youtu.be/l-B0qQyNxiU)  
 
-## Contributing
-
-Contributions are always welcome! If you have any suggestions, ideas, or improvements, feel free to open an issue or submit a pull request. Together, we can make this extension even better.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
 ## Credit
 
 This extension was built upon the codebase of the [Pomodoro Chrome Extension](https://github.com/sejalvasan/Pomodoro-Chrome-Extension) by [Sejal Vasan](https://github.com/sejalvasan).
