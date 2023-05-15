@@ -30,8 +30,9 @@ The Focus-Mode Chrome Extension allows you to take control of your browsing habi
 4. Start the timer and enjoy uninterrupted focus on your tasks.
 5. When the timer expires, a notificaton with show, and the blocked websites will become accessible again.
 
+
+**Video demo of installation and usage**  
 [![](https://markdown-videos.deta.dev/youtube/l-B0qQyNxiU)](https://youtu.be/l-B0qQyNxiU)  
-**Video demo of installation and usage**
 
 ## Contributing
 
